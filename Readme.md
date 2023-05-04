@@ -33,13 +33,13 @@ Para poder visualizar las situaciones que pasarian usamos simulaciones discretas
 En ambos casos vimos que se pierden una importante cantidad de paquetes, debido a saturaciónes en distintos buffers según el caso. En el caso 1 se satura el buffer de nodeRx (receptor) mientras que en el caso 2 se satura el buffer de Queue (la red). 
 
 Aca vemos que como se llenan los buffers según el caso:
-<image src = "/casosLab3/caso1/0.1/caso1_Buffers.png" caption = "Caso 1"/>
-<image src = "/casosLab3/caso2/0.1/caso2_Buffers.png" caption = "Caso 2"/>
+<img src="casosLab3/caso1/0.1/caso1_Buffers.png" caption="Caso 1"/>
+<img src="casosLab3/caso2/0.1/caso2_Buffers.png" caption="Caso 2"/>
 
 En las siguientes imagenes vemos que cuando se llena el buffer empiezan a perderse paquetes:
-<image src = "/casosLab3/caso1/0.1/caso1_0.1_perdidosrelacionbuffer.png" caption = "Caso 1"/>
-<image src = "/casosLab3/caso2/0.1/caso2_0.1_BufferPaquetesPerdidos" caption = "Caso 2"/>
+<img src="casosLab3/caso1/0.1/caso1_0.1_perdidosrelacionbuffer.png" caption="Caso 1"/>
+<img src="casosLab3/caso2/0.1/caso2_0.1_BufferPaquetesPerdidos" caption="Caso 2"/>
 
 Vemos que como hay un cuello de botella por reducir a la mitad la velocidad en una parte, distinta según el caso, provoca que a larga se pierdan la mitad de los paquetes enviados. Esto se ve en los siguientes gráficos:
-<image src = "/casosLab3/caso1/0.1/caso1_0.1_Barrapaquetesenviadosyrecibidos.png" caption = "Caso 1"/>
-<image src = "/casosLab3/caso2/0.1/caso2_0.1_Barrapaquetesrecibidosyenviados.png" caption = "Caso 2"/>
+<img src="casosLab3/caso1/0.1/caso1_0.1_Barrapaquetesenviadosyrecibidos.png" caption="Caso 1"/>
+<img src="casosLab3/caso2/0.1/caso2_0.1_Barrapaquetesrecibidosyenviados.png" caption="Caso 2"/>
