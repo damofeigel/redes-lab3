@@ -34,31 +34,31 @@ Para poder visualizar las situaciones que pasarian usamos simulaciones discretas
 En ambos casos vimos que se pierden una importante cantidad de paquetes, debido a saturaciónes en distintos buffers según el caso. En el caso 1 se satura el buffer de nodeRx (receptor) mientras que en el caso 2 se satura el buffer de Queue (la red). 
 
 Aca vemos que como se llenan los buffers según el caso:
-![Caso1Buffer](casosLab3/caso1/0.1/caso1_Buffers.png)  
-![Caso2Buffer](casosLab3/caso2/0.1/caso2_Buffers.png)  
-| Caso 1 |  Caso 2 |
 
+(Tener en cuenta que las imagenes de la izquierda siempre van a representar el caso de estudio 1 mientras que la de la derecha el caso de estudio 2)
 
+![Caso1Buffer](casosLab3/caso1/0.1/caso1_Buffers.png "Caso 1")  
+![Caso2Buffer](casosLab3/caso2/0.1/caso2_Buffers.png "Caso 2")  
 
 En las siguientes imagenes vemos que cuando se llena el buffer empiezan a perderse paquetes:
-![Caso1PerdidaPaquetes](casosLab3/caso1/0.1/caso1_0.1_perdidosrelacionbuffer.png)  
-![Caso2PerdidaPaquetes](casosLab3/caso2/0.1/caso2_0.1_BufferPaquetesPerdidos.png) 
-| Caso 1 |  Caso 2 |
+
+![Caso1PerdidaPaquetes](casosLab3/caso1/0.1/caso1_0.1_perdidosrelacionbuffer.png "Caso 1")  
+![Caso2PerdidaPaquetes](casosLab3/caso2/0.1/caso2_0.1_BufferPaquetesPerdidos.png "Caso 2")
 
 Vemos que como hay un cuello de botella por reducir a la mitad la velocidad en una parte, distinta según el caso, provoca que a larga se pierdan la mitad de los paquetes enviados. Esto se ve en los siguientes gráficos:
-![Caso1Paquetesenviadosyrecibidos](casosLab3/caso1/0.1/caso1_0.1_Barrapaquetesenviadosyrecibidos.png)  
-![Caso2Paquetesenviadosyrecibidos](casosLab3/caso2/0.1/caso2_0.1_Barrapaquetesrecibidosyenviados.png) 
-| Caso 1 |  Caso 2 |
+
+![Caso1Paquetesenviadosyrecibidos](casosLab3/caso1/0.1/caso1_0.1_Barrapaquetesenviadosyrecibidos.png "Caso 1")  
+![Caso2Paquetesenviadosyrecibidos](casosLab3/caso2/0.1/caso2_0.1_Barrapaquetesrecibidosyenviados.png "Caso 2") 
 
 En ambos casos, si aumentamos el lambda, sucede que empieza a ver menos perdida de paquetes ya que se envían menos paquetes por segundo. Hasta que no se pierden paquetes aunque haya problemas de flujo y/o congestión debido a que se envían cada bastante tiempo, dandole la posibilidad de que todos los paquetes lleguen al receptor.  
-![Caso1IntervalosBuffer](casosLab3/caso1/caso1_comparacionintervalosBuffer.png) 
-![Caso2IntervalosBuffer](casosLab3/caso2/caso2_queueBufferIntervalos.png)   
-| Caso 1 |  Caso 2 |
+
+![Caso1IntervalosBuffer](casosLab3/caso1/caso1_comparacionintervalosBuffer.png "Caso 1") 
+![Caso2IntervalosBuffer](casosLab3/caso2/caso2_queueBufferIntervalos.png "Caso 2")
 
 Todo lo anterior lo podemos ver en el delay (retardo) de ambos casos, donde se observa que cuando se empieza a saturar algún buffer provoca un aumento del delay de los paquetes.
-![Caso1DelayIntervalos](casosLab3/caso1/caso1_comparacionDelays.png)  
-![Caso2DelayIntervalos](casosLab3/caso2/Caso2_delayIntervalos.png)   
-| Caso 1 |  Caso 2 |
+
+![Caso1DelayIntervalos](casosLab3/caso1/caso1_comparacionDelays.png "Caso 1")  
+![Caso2DelayIntervalos](casosLab3/caso2/Caso2_delayIntervalos.png "Caso 2")   
 
 Por último, aunque lo que provoca la perdida de paquetes y aumento de delays en los dos casos de estudio son cosas diferentes, vemos que afectan de la misma forma, por eso la similud en lo gráficos de cada caso. En los siguiente gráficos se ven claramente, ya que los paquetes recibidos y envíados por segundo en las diferentes simulaciones cambiandos los valores del lamda para la generación de paquetes dan el mismo gráfico para ambos casos de estudio.
 
