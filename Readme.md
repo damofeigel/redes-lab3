@@ -33,9 +33,8 @@ Para poder visualizar las situaciones que pasarian usamos simulaciones discretas
 En ambos casos vimos que se pierden una importante cantidad de paquetes, debido a saturaciónes en distintos buffers según el caso. En el caso 1 se satura el buffer de nodeRx (receptor) mientras que en el caso 2 se satura el buffer de Queue (la red). 
 
 Aca vemos que como se llenan los buffers según el caso:
-![](casosLab3/caso1/0.1/caso1_Buffers.png)
-*Caso 1*
-<img src="casosLab3/caso2/0.1/caso2_Buffers.png" caption="Caso 2"/>
+![Caso1_Buffers](casosLab3/caso1/0.1/caso1_Buffers.png "Caso 1")
+![Caso2_Buffers](casosLab3/caso1/0.1/caso2_Buffers.png "Caso 2")
 
 En las siguientes imagenes vemos que cuando se llena el buffer empiezan a perderse paquetes:
 <img src="casosLab3/caso1/0.1/caso1_0.1_perdidosrelacionbuffer.png" caption="Caso 1"/>
