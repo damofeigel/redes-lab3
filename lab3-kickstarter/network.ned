@@ -27,24 +27,49 @@ simple Sink
         input in;
 }
 
+simple TransportTx
+{
+	    parameters:
+	        volatile double serviceTime; // sec
+	        int bufferSize;
+	        @display("i=block/queue;q=buffer");
+	    gates:
+	        input toApp;
+	        inout toOut;
+}
+
+simple TransportRx
+{
+    parameters:
+        volatile double serviceTime; // sec
+    	int bufferSize;
+	    @display("i=block/queue;q=buffer");
+	gates:
+	    output toApp;
+	    inout toOut;   
+}
+
 module NodeTx
 {
     parameters: 
         @display("i=block/routing");
     gates:
         output out;
+        input in;
     submodules:
         gen: Generator {
             parameters:
                 @display("p=75,50");
         }
-      	queue: Queue {
+      	traTx: TransportTx {
       	    parameters:
       	        @display("p=75,190");
       	}
     connections:
-        gen.out --> queue.in;
-        queue.out --> out;
+        gen.out --> traTx.toOut$i;
+        traTx.toOut$o --> out;
+        
+        in --> traTx.toApp;
 }
 
 module NodeRx
@@ -53,21 +78,24 @@ module NodeRx
         @display("i=block/routing");
     gates:
         input in;
+        output out;
     submodules:
         sink: Sink {
             parameters:
                 @display("p=75,50");
         }
-      	queue: Queue {
+      	traRx: TransportRx {
       	    parameters:
       	        @display("p=75,190");
       	}
     connections:
-        in --> queue.in;
+        in --> traRx.toOut$i;
         // case study 1:
-        queue.out --> { datarate = 0.5Mbps; } --> sink.in;
+        traRx.toOut$o --> { datarate = 0.5Mbps; } --> sink.in;
         // case study 2:
         //queue.out --> { datarate = 1Mbps; } --> sink.in;
+        
+        traRx.toApp --> out;
 }
 
 network Network
@@ -77,16 +105,25 @@ network Network
         nodeTx: NodeTx {
             @display("p=30,30");
         }
-        queue: Queue {
+        queue1: Queue {
             @display("p=130,30");
         }
+        
+        queue2: Queue {
+            @display("p=130,120");
+        }
+        
         nodeRx: NodeRx {
             @display("p=230,30");
         }
     connections:
-        nodeTx.out --> { datarate = 1Mbps; delay = 100us; } --> queue.in;
+        nodeTx.out --> { datarate = 1Mbps; delay = 100us; } --> queue1.in;
        	// case study 1:
-       	queue.out --> { datarate = 1Mbps; delay = 100us; } --> nodeRx.in;
+       	queue1.out --> { datarate = 1Mbps; delay = 100us; } --> nodeRx.in;
        	// case study 2:
        	//queue.out --> { datarate = 0.5Mbps; delay = 100us; } --> nodeRx.in; 
+       	
+       	nodeRx.out --> queue2.in;
+       	queue2.out --> nodeTx.in;
+       	
 }
