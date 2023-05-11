@@ -1,3 +1,3 @@
 packet FeedBackPacket {
-    int RemainingBuffer;
+    bool BufferFull;
 }
