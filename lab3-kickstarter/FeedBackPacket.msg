@@ -1,3 +1,3 @@
 packet FeedBackPacket {
-    bool BufferFull;
+    bool WaitingAck;
 }

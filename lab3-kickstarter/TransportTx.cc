@@ -14,7 +14,7 @@ private:
     cQueue buffer;
     cMessage *endServiceEvent;
     simtime_t serviceTime;
-    bool bufferFull;            // Bool to know if increment serviceTime
+    bool waitingACK;            // Bool to wait ack
     cOutVector bufferSizeVector;
     cOutVector packetDropVector;
 public:
@@ -38,7 +38,7 @@ TransportTx::~TransportTx() {
 
 void TransportTx::initialize() {
     buffer.setName("buffer");
-    bufferFull = false;
+    waitingACK = false;
     endServiceEvent = new cMessage("endService");
     bufferSizeVector.setName("Buffer Size");
     packetDropVector.setName("Packet drops");
@@ -54,7 +54,7 @@ void TransportTx::handleMessage(cMessage *msg) {
         FeedBackPacket* feedbackPkt = (FeedBackPacket*) msg;
 
         // Do something with the feedback info
-        bufferFull = feedbackPkt->getBufferFull();
+        waitingACK = feedbackPkt->getWaitingAck();
 
         delete(msg);
 
@@ -63,7 +63,10 @@ void TransportTx::handleMessage(cMessage *msg) {
         // if msg is signaling an endServiceEvent
         if (msg == endServiceEvent) {
             // if packet in buffer, send next one
-            if (!buffer.isEmpty()) {
+            if (!buffer.isEmpty() && !waitingACK) {
+                // Wait for ACK
+                waitingACK = true;
+
                 // dequeue packet
                 cPacket *pkt = (cPacket*) buffer.pop();
                 // send packet
@@ -71,11 +74,7 @@ void TransportTx::handleMessage(cMessage *msg) {
 
                 // start new service
                 serviceTime = pkt->getDuration();
-                if (bufferFull) {
-                    scheduleAt(simTime() + serviceTime*2, endServiceEvent);
-                } else {
-                    scheduleAt(simTime() + serviceTime, endServiceEvent);
-                }
+                scheduleAt(simTime() + serviceTime, endServiceEvent);
             }
         // check buffer limit
         } else if (buffer.getLength() >= par("bufferSize").intValue()) {
