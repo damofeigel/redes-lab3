@@ -14,7 +14,7 @@ private:
     cQueue buffer;
     cMessage *endServiceEvent;
     simtime_t serviceTime;
-    bool bufferFull;            // Bool to know if increment serviceTime
+    int incrementServiceTime;            // How much increment serviceTime
     cOutVector bufferSizeVector;
     cOutVector packetDropVector;
 public:
@@ -38,7 +38,7 @@ TransportTx::~TransportTx() {
 
 void TransportTx::initialize() {
     buffer.setName("buffer");
-    bufferFull = false;
+    incrementServiceTime = 1;
     endServiceEvent = new cMessage("endService");
     bufferSizeVector.setName("Buffer Size");
     packetDropVector.setName("Packet drops");
@@ -54,7 +54,7 @@ void TransportTx::handleMessage(cMessage *msg) {
         FeedBackPacket* feedbackPkt = (FeedBackPacket*) msg;
 
         // Do something with the feedback info
-        bufferFull = feedbackPkt->getBufferFull();
+         incrementServiceTime = feedbackPkt->getIncrementServiceTime();
 
         delete(msg);
 
@@ -71,11 +71,9 @@ void TransportTx::handleMessage(cMessage *msg) {
 
                 // start new service
                 serviceTime = pkt->getDuration();
-                if (bufferFull) {
-                    scheduleAt(simTime() + serviceTime*2, endServiceEvent);
-                } else {
-                    scheduleAt(simTime() + serviceTime, endServiceEvent);
-                }
+
+                scheduleAt(simTime() + serviceTime * incrementServiceTime, endServiceEvent);
+
             }
         // check buffer limit
         } else if (buffer.getLength() >= par("bufferSize").intValue()) {

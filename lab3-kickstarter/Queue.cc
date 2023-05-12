@@ -12,7 +12,8 @@ class Queue: public cSimpleModule {
 private:
     cQueue buffer;
     cQueue bufferFeedPacket;
-    bool bufferFull;
+    int packetReceived;         // Counter
+    int incrementServiceTime;   // How much increment serviceTime
     cMessage *endServiceEvent;
     simtime_t serviceTime;
     cOutVector bufferSizeVector;
@@ -38,7 +39,8 @@ Queue::~Queue() {
 
 void Queue::initialize() {
     buffer.setName("buffer");
-    bufferFull = false;
+    packetReceived = 0;
+    incrementServiceTime = 1;
     bufferFeedPacket.setName("bufferFeedPacket");
     endServiceEvent = new cMessage("endService");
     bufferSizeVector.setName("Buffer Size");
@@ -74,31 +76,43 @@ void Queue::handleMessage(cMessage *msg) {
         }
     // check buffer limit
     } else if (buffer.getLength() >= par("bufferSize").intValue()) {
+        // Add 1 to the counter for each packet received
+        packetReceived++;
         // drop the packet
         delete msg;
         this->bubble("packet dropped");
         packetDropVector.record(1);
     } else {
+        // Add 1 to the counter for each packet received
+        packetReceived++;
         // enqueue the packet
         buffer.insert(msg);
         bufferSizeVector.record(buffer.getLength());
 
-        // If buffer is half full
-        if (!bufferFull && buffer.getLength() >= par("bufferSize").intValue() / 2) {
-            bufferFull = true;
-            // Create FeedBackPacket to send a TraRx to send to TraTx
-            FeedBackPacket *feedBackPkt = new FeedBackPacket("packet");
-            feedBackPkt->setBufferFull(true);
-            feedBackPkt->setKind(2);
-            bufferFeedPacket.insert(feedBackPkt);
+        // If received more than (bufferSize/4) packets
+        if (packetReceived > par("bufferSize").intValue() / 4) {
+            // Set count to 0
+            packetReceived = 0;
 
-        // If buffer is half empty and was sent a FeedBackPacket
-        } else if (bufferFull && buffer.getLength() < par("bufferSize").intValue() / 2) {
-            bufferFull = false;
-            FeedBackPacket *feedBackPkt = new FeedBackPacket("packet");
-            feedBackPkt->setBufferFull(false);
-            feedBackPkt->setKind(2);
-            bufferFeedPacket.insert(feedBackPkt);
+            // If buffer is half occupied
+            if (buffer.getLength() >= par("bufferSize").intValue() / 2) {
+                incrementServiceTime++;
+                // Create FeedBackPacket to send a TraTx
+                FeedBackPacket *feedBackPkt = new FeedBackPacket("packet");
+                feedBackPkt->setIncrementServiceTime(incrementServiceTime);
+                feedBackPkt->setKind(2);
+                bufferFeedPacket.insert(feedBackPkt);
+
+            // If buffer is half free and incrementServiceTime > 1
+            } else if (incrementServiceTime > 1 &&
+                buffer.getLength() < par("bufferSize").intValue() / 2) {
+                incrementServiceTime--;
+                // Create FeedBackPacket to send a TraTx
+                FeedBackPacket *feedBackPkt = new FeedBackPacket("packet");
+                feedBackPkt->setIncrementServiceTime(incrementServiceTime);
+                feedBackPkt->setKind(2);
+                bufferFeedPacket.insert(feedBackPkt);
+            }
         }
 
         // if the server is idle
