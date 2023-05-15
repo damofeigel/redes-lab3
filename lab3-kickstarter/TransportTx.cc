@@ -38,7 +38,7 @@ TransportTx::~TransportTx() {
 
 void TransportTx::initialize() {
     buffer.setName("buffer");
-    waitingACK = false;
+    waitingACK = false;         // Initialized in false
     endServiceEvent = new cMessage("endService");
     bufferSizeVector.setName("Buffer Size");
     packetDropVector.setName("Packet drops");
@@ -53,7 +53,8 @@ void TransportTx::handleMessage(cMessage *msg) {
         // msg is a FeedBackPkt
         FeedBackPacket* feedbackPkt = (FeedBackPacket*) msg;
 
-        // Do something with the feedback info
+        // Set the variable to the value of the feedBackPkt
+        // is always false, to send the next packet
         waitingACK = feedbackPkt->getWaitingAck();
 
         delete(msg);
@@ -62,7 +63,8 @@ void TransportTx::handleMessage(cMessage *msg) {
         // msg is a data packet
         // if msg is signaling an endServiceEvent
         if (msg == endServiceEvent) {
-            // if packet in buffer, send next one
+            // if packet in buffer, and is not waiting
+            // for ACK, send next one
             if (!buffer.isEmpty() && !waitingACK) {
                 // Wait for ACK
                 waitingACK = true;
