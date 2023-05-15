@@ -103,8 +103,8 @@ Esto se da porque se aumenta el tiempo que demora el transmisor en enviar un paq
 
 
 Los siguientes gráficos muestran la cantidad de paquetes en el buffer de *TransportRx* y *Queue1* (según el caso) para distintos valores de lambda.
-![CantidadDePaquetesEnRx](graficos/disenio/caso1/caso1_comparacionintervalosBuffer.png)
-![CantidadDePaquetesEnQueue](graficos/disenio/caso2/caso2/comparacionbuffers.png)
+![CantidadDePaquetesEnRx](graficos/disenio/caso1/comparacionbuffers.png)
+![CantidadDePaquetesEnQueue](graficos/disenio/caso2/comparacionbuffers.png)
 
 Se puede observar como en ningún caso el buffer de interés se alcanza a llenar.
 
