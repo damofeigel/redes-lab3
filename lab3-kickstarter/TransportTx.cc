@@ -38,7 +38,7 @@ TransportTx::~TransportTx() {
 
 void TransportTx::initialize() {
     buffer.setName("buffer");
-    incrementServiceTime = 1;
+    incrementServiceTime = 1;         // Initialized with 1 because is a multiplier
     endServiceEvent = new cMessage("endService");
     bufferSizeVector.setName("Buffer Size");
     packetDropVector.setName("Packet drops");
@@ -53,7 +53,7 @@ void TransportTx::handleMessage(cMessage *msg) {
         // msg is a FeedBackPkt
         FeedBackPacket* feedbackPkt = (FeedBackPacket*) msg;
 
-        // Do something with the feedback info
+        // get the value of incrementServiceTime
          incrementServiceTime = feedbackPkt->getIncrementServiceTime();
 
         delete(msg);
@@ -71,7 +71,7 @@ void TransportTx::handleMessage(cMessage *msg) {
 
                 // start new service
                 serviceTime = pkt->getDuration();
-
+                // serviceTime multiplied by incrementServiceTime
                 scheduleAt(simTime() + serviceTime * incrementServiceTime, endServiceEvent);
 
             }

@@ -40,7 +40,7 @@ Queue::~Queue() {
 void Queue::initialize() {
     buffer.setName("buffer");
     packetReceived = 0;
-    incrementServiceTime = 1;
+    incrementServiceTime = 1;       // Initialized with 1 because is a multiplier
     bufferFeedPacket.setName("bufferFeedPacket");
     endServiceEvent = new cMessage("endService");
     bufferSizeVector.setName("Buffer Size");
@@ -97,7 +97,8 @@ void Queue::handleMessage(cMessage *msg) {
             // If buffer is half occupied
             if (buffer.getLength() >= par("bufferSize").intValue() / 2) {
                 incrementServiceTime++;
-                // Create FeedBackPacket to send a TraTx
+                // Create FeedBackPacket to send a TraRx and then send to TraTx
+                // and increase the serviceTime in 1
                 FeedBackPacket *feedBackPkt = new FeedBackPacket("packet");
                 feedBackPkt->setIncrementServiceTime(incrementServiceTime);
                 feedBackPkt->setKind(2);
@@ -107,7 +108,8 @@ void Queue::handleMessage(cMessage *msg) {
             } else if (incrementServiceTime > 1 &&
                 buffer.getLength() < par("bufferSize").intValue() / 2) {
                 incrementServiceTime--;
-                // Create FeedBackPacket to send a TraTx
+                // Create FeedBackPacket to send a TraRx and then send to TraTx
+                // and increase the serviceTime in 1
                 FeedBackPacket *feedBackPkt = new FeedBackPacket("packet");
                 feedBackPkt->setIncrementServiceTime(incrementServiceTime);
                 feedBackPkt->setKind(2);

@@ -40,7 +40,7 @@ TransportRx::~TransportRx() {
 void TransportRx::initialize() {
     buffer.setName("buffer");
     packetReceived = 0;
-    incrementServiceTime = 1;
+    incrementServiceTime = 1;       // Initialized with 1 because is a multiplier
     bufferFeedPacket.setName("bufferFeedPacket");
     endServiceEvent = new cMessage("endService");
     bufferSizeVector.setName("Buffer Size");
@@ -54,7 +54,7 @@ void TransportRx::handleMessage(cMessage *msg) {
 
     // if msg is signaling an endServiceEvent
     if (msg == endServiceEvent) {
-        // if packet in bufferFeed
+        // if packet in bufferFeed, send it
         if (!bufferFeedPacket.isEmpty()) {
             // dequeue packet
             FeedBackPacket *feedBackPkt = (FeedBackPacket*) bufferFeedPacket.pop();
@@ -75,9 +75,11 @@ void TransportRx::handleMessage(cMessage *msg) {
             scheduleAt(simTime() + serviceTime, endServiceEvent);
         }
 
-    // check if is a FeedBackPacket from queue
+    // check if is a FeedBackPacket from queue1
     } else if (msg->getKind() == 2) {
         FeedBackPacket *feedBackPkt = (FeedBackPacket*) msg;
+        // If incrementServiceTime of queue1 is higher than incrementServiceTime
+        // send the packet with the value, if not delete the packet
         if (feedBackPkt->getIncrementServiceTime() >= incrementServiceTime) {
             bufferFeedPacket.insert(feedBackPkt);
         } else {
@@ -108,6 +110,7 @@ void TransportRx::handleMessage(cMessage *msg) {
             if (buffer.getLength() >= par("bufferSize").intValue() / 2) {
                 incrementServiceTime++;
                 // Create FeedBackPacket to send a TraTx
+                // and increase the serviceTime in 1
                 FeedBackPacket *feedBackPkt = new FeedBackPacket("packet");
                 feedBackPkt->setIncrementServiceTime(incrementServiceTime);
                 feedBackPkt->setKind(2);
@@ -118,6 +121,7 @@ void TransportRx::handleMessage(cMessage *msg) {
                 buffer.getLength() < par("bufferSize").intValue() / 2) {
                 incrementServiceTime--;
                 // Create FeedBackPacket to send a TraTx
+                // and reduce the serviceTime in 1
                 FeedBackPacket *feedBackPkt = new FeedBackPacket("packet");
                 feedBackPkt->setIncrementServiceTime(incrementServiceTime);
                 feedBackPkt->setKind(2);
